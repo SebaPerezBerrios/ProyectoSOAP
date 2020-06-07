@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="esquemaServicio" targetNamespace="http://localhost:8000/esquemaServicio" xmlns="http://localhost:8000/esquemaServicio" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <wsdl:message name="ponderacionPSURequest">
+    <wsdl:part name="nombreArchivo" type="xs:string"/>
+    <wsdl:part name="tipoMIME" type="xs:string"/>
+    <wsdl:part name="csv_B64" type="xs:string"/>
+  </wsdl:message>
+  <wsdl:message name="ponderacionPSUResponse">
+    <wsdl:part name="test" type="xs:string"/>
+    <wsdl:part name="mime" type="xs:string"/>
+    <wsdl:part name="csv_B64" type="xs:string"/>
+  </wsdl:message>
+  <wsdl:portType name="funciones">
+    <wsdl:operation name="ponderacionPSU">
+      <wsdl:input message="ponderacionPSURequest"/>
+      <wsdl:output message="ponderacionPSUResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="puerto" type="funciones">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="ponderacionPSU">
+      <soap:operation soapAction="ponderacionPSU"/>
+      <wsdl:input>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="servicio">
+    <wsdl:port binding="puerto" name="puerto">
+      <soap:address location="http://localhost:8001/esquemaServicio"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
