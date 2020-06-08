@@ -18,6 +18,7 @@ ponderacionPSU((res) => {
   const excel = res.archivo;
   const buffer = Buffer.from(excel, 'base64');
   fs.writeFile('test.xlsx', buffer, (err) => {
-    console.log('archivo creado');
+    if (err) console.log(err);
+    else console.log('archivo creado');
   });
 })

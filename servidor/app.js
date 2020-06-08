@@ -1,18 +1,24 @@
 const soap = require('soap');
 const xml = require('fs').readFileSync('esquemaServicio.wsdl', 'utf8');
 const express = require('express');
+const accum = require('accum');
 
 const { generarExcel } = require('./modules/crearExcel');
 
 let servicio = {
   servicio: {
     puerto: {
-      ponderacionPSU: async ({ nombreArchivo, tipoMIME, csv_B64 }) => {
+      ponderacionPSU: ({ nombreArchivo, tipoMIME, csv_B64 }, callback) => {
         const csv = Buffer.from(csv_B64, 'base64').toString('ascii');
-        const excel = generarExcel(csv);
-        // TODO fix problema de rendimiento y memoria de buffer
-        const excelBuffer = await excel.xlsx.writeBuffer();
-        return { nombre: nombreArchivo, archivo: excelBuffer.toString('base64'), mime: 'excel' };
+        const lineas = csv.split(/\r?\n/)
+          .filter(linea => !(linea === ''));
+
+        let bufferSalida = accum.buffer((bufferCompleto) => {
+          callback(
+            { nombre: nombreArchivo, archivo: bufferCompleto.toString('base64'), mime: 'excel' }
+          );
+        })
+        generarExcel(lineas, bufferSalida);
       }
     }
   }

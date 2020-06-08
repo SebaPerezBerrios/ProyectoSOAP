@@ -1,8 +1,3 @@
-const parsePuntajes = (str) => {
-  const lineas = str.split(/\r?\n/);
-  return lineas.filter(linea => !(linea === '')).map(parsePuntaje);
-}
-
 const parsePuntaje = (linea) => {
   const arr = linea.split(';');
   return {
@@ -11,5 +6,5 @@ const parsePuntaje = (linea) => {
 }
 
 module.exports = {
-  parsePuntajes
+  parsePuntaje
 }

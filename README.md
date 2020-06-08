@@ -35,7 +35,7 @@ Los clientes deben obtener el archivo WSDL de la dirección `http://localhost:80
 
 ## TODO
 
-- [ ] Resolver problema de rendimiento de buffer de escritura de archivo.
+- [x] Resolver problema de rendimiento de buffer de escritura de archivo.
 - [ ] Leer datos de carreras de base de datos.
 - [ ] agregar autenticación API-KEY.
 
