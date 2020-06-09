@@ -1,6 +1,7 @@
 # Prerequisites
 *node_modules
 *.csv
+*.xlsx
 *.directory
 *.vscode
 

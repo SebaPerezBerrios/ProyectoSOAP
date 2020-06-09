@@ -5,20 +5,49 @@ const accum = require('accum');
 
 const { generarExcel } = require('./modules/crearExcel');
 
+const soapErr = (value, text) => {
+  return {
+    Fault: {
+      Code: {
+        Value: 'soap:Sender',
+        Subcode: { value: value }
+      },
+      Reason: { Text: text }
+    }
+  };
+}
+
 let servicio = {
   servicio: {
     puerto: {
-      ponderacionPSU: ({ nombreArchivo, tipoMIME, csv_B64 }, callback) => {
-        const csv = Buffer.from(csv_B64, 'base64').toString('ascii');
-        const lineas = csv.split(/\r?\n/)
-          .filter(linea => !(linea === ''));
-
-        let bufferSalida = accum.buffer((bufferCompleto) => {
-          callback(
-            { nombre: nombreArchivo, archivo: bufferCompleto.toString('base64'), mime: 'excel' }
-          );
-        })
-        generarExcel(lineas, bufferSalida);
+      ponderacionPSU: ({ nombreArchivo, mime, csv_B64 }) => {
+        return new Promise((resolve, reject) => {
+          try {
+            if (mime !== 'text/csv')
+              throw 'MIME';
+            const csv = Buffer.from(csv_B64, 'base64').toString('ascii');
+            const lineas = csv.split(/\r?\n/)
+              .filter(linea => !(linea === ''));
+            let bufferSalida = accum.buffer((bufferCompletado) => {
+              resolve({
+                nombreArchivo: nombreArchivo,
+                mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', archivo: bufferCompletado.toString('base64')
+              });
+            });
+            generarExcel(lineas, bufferSalida).catch(err => {
+              if (err === 'DB')
+                reject(soapErr('rpc:DBError', 'Error in DB backend'));
+              if (err === 'CSV')
+                reject(soapErr('rpc:BadArguments', 'CSV format error'));
+              reject(soapErr('rpc:InternalError', 'Unknown error'));
+            });
+          }
+          catch (err) {
+            if (err === 'MIME')
+              reject(soapErr('rpc:BadArguments', 'Bad MIME type'));
+            reject(soapErr('rpc:BadArguments', 'Bad Request'));
+          }
+        });
       }
     }
   }

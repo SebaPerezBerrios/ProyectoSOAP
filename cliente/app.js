@@ -6,9 +6,12 @@ const ponderacionPSU = (callback) => {
   soap.createClient(url, (err, client) => {
     if (err) throw err;
     const archivo = fs.readFileSync('puntajes.csv');
-    const req = { nombreArchivo: 'text.xlxs', tipoMIME: 'xml', csv_B64: archivo.toString('base64') };
+    const req = { nombreArchivo: 'text.xlxs', mime: 'text/csv', csv_B64: archivo.toString('base64') };
     client.ponderacionPSU(req, (err, res) => {
-      if (err) throw err;
+      if (err) {
+        console.log(err.body);
+        throw 'ERROR';
+      }
       callback(res);
     });
   });

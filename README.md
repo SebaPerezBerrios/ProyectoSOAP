@@ -8,22 +8,36 @@ Este repositorio contiene el backend SOAP,  además se incluye un cliente que pe
 - Se requiere`Node JS` LTS (v12.17.0).
 - PostgreSQL actualizado en su version 12.
 
-## Instalación y ejecución servidor
+## Base de datos
+En el repositorio se incluyen tanto el script de creación como el script de llenado de base de datos con la información de ponderaciones, puntajes y vacantes de las carreras impartidas por la UTEM periodo 2020.
+
+## Instalación servidor
 Desde la carpeta principal del proyecto.
 
 ```
-cd servidor
+cd servidor &&
 npm install  
-node app.js
 ```
+## Ejecución servidor
+
+```
+cd servidor  &&
+PGUSER=<nombre usuario> \
+  PGHOST=<ip servidor> \
+  PGPASSWORD=<contaseña servidor> \
+  PGDATABASE=<nombre base de datos> \
+  PGPORT=<puerto servidor> \
+  node app.js
+```
+
 El servidor confirmará el estado de ejecución.
 
 ## Instalación y ejecución cliente de prueba
 Desde la carpeta principal del proyecto.
 
 ```
-cd cliente  
-npm install  
+cd cliente &&
+npm install &&
 node app.js
 ```
 en la carpeta del cliente debe estar el archivo `puntajes.csv`.
@@ -35,8 +49,7 @@ Los clientes deben obtener el archivo WSDL de la dirección `http://localhost:80
 
 ## TODO
 
-- [x] Resolver problema de rendimiento de buffer de escritura de archivo.
-- [ ] Leer datos de carreras de base de datos.
+- [x] Leer datos de carreras de base de datos.
 - [ ] agregar autenticación API-KEY.
 
 ## Integrantes

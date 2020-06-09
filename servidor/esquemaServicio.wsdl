@@ -2,13 +2,13 @@
 <wsdl:definitions name="esquemaServicio" targetNamespace="http://localhost:8000/esquemaServicio" xmlns="http://localhost:8000/esquemaServicio" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <wsdl:message name="ponderacionPSURequest">
     <wsdl:part name="nombreArchivo" type="xs:string"/>
-    <wsdl:part name="tipoMIME" type="xs:string"/>
+    <wsdl:part name="mime" type="xs:string"/>
     <wsdl:part name="csv_B64" type="xs:string"/>
   </wsdl:message>
   <wsdl:message name="ponderacionPSUResponse">
-    <wsdl:part name="test" type="xs:string"/>
+    <wsdl:part name="nombreArchivo" type="xs:string"/>
+    <wsdl:part name="archivo" type="xs:string"/>
     <wsdl:part name="mime" type="xs:string"/>
-    <wsdl:part name="csv_B64" type="xs:string"/>
   </wsdl:message>
   <wsdl:portType name="funciones">
     <wsdl:operation name="ponderacionPSU">

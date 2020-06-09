@@ -1,17 +1,32 @@
-//TODO leer datos de carreras de base de datos (usar proyecto REST paralela como referencia)
-let datosCarreras =
-  [{ codigo: 21041, ponderaciones: { nem: 0.1, ranking: 0.2, matematica: 0.4, lenguaje: 0.2, ciencias_historia: 0.1 } }
-    , { codigo: 21040, ponderaciones: { nem: 0.2, ranking: 0.2, matematica: 0.3, lenguaje: 0.2, ciencias_historia: 0.1 } }
-  ]
+const { Pool } = require('pg');
 
-const crearHojasCarreras = (book) => {
-  return ({
-    21041: { hoja: book.addWorksheet('Ing Civil Compu'), posicion: 1 },
-    21040: { hoja: book.addWorksheet('Ing Inf'), posicion: 1 },
+const pool = new Pool();
+
+let ponderacionesCarreras = async () => {
+  const { rows } = await pool.query("SELECT * FROM carreras_2020", []).catch(err => { throw 'DB' });
+  return rows.map(row => ({
+    codigo: parseInt(row.pk),
+    ponderaciones: {
+      nem: Number(row.nem),
+      ranking: Number(row.ranking),
+      matematica: Number(row.matematica),
+      lenguaje: Number(row.lenguaje),
+      ciencias_historia: Number(row.ciencias_historia)
+    }
+  }
+  ));
+}
+
+const crearHojasCarreras = async (book) => {
+  const { rows } = await pool.query("SELECT pk, nombre FROM carreras_2020", []).catch(err => { throw 'DB' });
+  let hojasCarreras = {}
+  rows.forEach(row => {
+    hojasCarreras[row.pk] = book.addWorksheet(row.nombre);
   });
+  return hojasCarreras;
 }
 
 module.exports = {
-  datosCarreras,
+  ponderacionesCarreras,
   crearHojasCarreras
 }

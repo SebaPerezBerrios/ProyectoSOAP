@@ -2,33 +2,39 @@ const Excel = require('exceljs');
 
 const { ponderaciones } = require('../utils/ponderaciones');
 const { parsePuntaje } = require('../utils/parser');
-const { crearHojasCarreras } = require('../utils/carreras');
+const { crearHojasCarreras, ponderacionesCarreras } = require('../utils/carreras');
 
 const agregarPonderacion = ({ codigo, rut, ponderacion }, carreras) => {
-  const posicionHoja = ++carreras[codigo].posicion;
-  let hoja = carreras[codigo].hoja;
+  let hoja = carreras[codigo];
   hoja.addRow([rut, ponderacion]).commit();
 }
 
-const llenarExcel = (linea, carreras) => {
+const agregarRegistroExcel = (linea, carreras, ponderacionCarreras) => {
   const rutPuntaje = parsePuntaje(linea);
-  agregarPonderacion(ponderaciones(rutPuntaje), carreras);
+  const ponderacionRutPuntaje = ponderaciones(rutPuntaje, ponderacionCarreras);
+
+  agregarPonderacion(ponderacionRutPuntaje, carreras);
 }
 
 const agregarEncabezados = (carreras) => {
-  Object.values(carreras).forEach(({ hoja, _ }) => {
+  Object.values(carreras).forEach((hoja) => {
     hoja.addRow(['RUT', 'Ponderacion']).commit();
   });
 }
 
-const generarExcel = (lineas, streamSalida) => {
+const generarExcel = async (lineas, streamSalida) => {
   const options = {
     stream: streamSalida,
   };
   let book = new Excel.stream.xlsx.WorkbookWriter(options);
-  const carreras = crearHojasCarreras(book);
+  const carreras = await crearHojasCarreras(book);
+  const ponderacionCarreras = await ponderacionesCarreras();
+
   agregarEncabezados(carreras);
-  lineas.forEach(linea => llenarExcel(linea, carreras));
+  for (let index = 0; index < lineas.length; index++) {
+    const linea = lineas[index];
+    agregarRegistroExcel(linea, carreras, ponderacionCarreras);
+  }
   book.commit()
 }
 
