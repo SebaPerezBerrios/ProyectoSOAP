@@ -2,31 +2,25 @@ const { Pool } = require('pg');
 
 const pool = new Pool();
 
-let ponderacionesCarreras = async () => {
+let ponderacionesCarreras = async (book) => {
   const { rows } = await pool.query("SELECT * FROM carreras_2020", []).catch(err => { throw 'DB' });
-  return rows.map(row => ({
-    codigo: parseInt(row.pk),
+  const ponderacionesCarreras = rows.map(row => ({
     ponderaciones: {
       nem: Number(row.nem),
       ranking: Number(row.ranking),
       matematica: Number(row.matematica),
       lenguaje: Number(row.lenguaje),
       ciencias_historia: Number(row.ciencias_historia)
-    }
+    },
+    hoja: book.addWorksheet(`${row.nombre}(${row.pk})`),
   }
   ));
-}
-
-const crearHojasCarreras = async (book) => {
-  const { rows } = await pool.query("SELECT pk, nombre FROM carreras_2020", []).catch(err => { throw 'DB' });
-  let hojasCarreras = {}
-  rows.forEach(row => {
-    hojasCarreras[row.pk] = book.addWorksheet(row.nombre);
+  ponderacionesCarreras.forEach(({ hoja }) => {
+    hoja.addRow(['RUT', 'Ponderación']).commit()
   });
-  return hojasCarreras;
+  return ponderacionesCarreras;
 }
 
 module.exports = {
   ponderacionesCarreras,
-  crearHojasCarreras
 }
