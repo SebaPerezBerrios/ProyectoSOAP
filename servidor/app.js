@@ -39,7 +39,7 @@ let servicio = {
                 reject(soapErr('rpc:DBError', 'Error in DB backend'));
               if (err === 'CSV')
                 reject(soapErr('rpc:BadArguments', 'CSV format error'));
-              reject(soapErr('rpc:InternalError', 'Unknown error'));
+              reject(soapErr('rpc:InternalError', 'Internal server error'));
             });
           }
           catch (err) {
@@ -62,7 +62,6 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, soapaction, Accept");
   next();
 });
-
 
 app.listen(puerto, function () {
   soap.listen(app, '/esquemaServicio', servicio, xml, function () {

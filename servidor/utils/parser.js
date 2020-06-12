@@ -4,15 +4,15 @@ const parsePuntaje = (linea) => {
     throw 'CSV';
   }
   return {
-    rut: arr[0],
-    puntaje: {
+    rut: parseInt(arr[0]),
+    puntajes: {
       nem: parseInt(arr[1]),
       ranking: parseInt(arr[2]),
       matematica: parseInt(arr[3]),
       lenguaje: parseInt(arr[4]),
       ciencias: parseInt(arr[5]),
       historia: parseInt(arr[6]),
-    }
+    },
   };
 }
 
