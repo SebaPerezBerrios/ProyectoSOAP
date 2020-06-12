@@ -22,7 +22,8 @@ npm install
 
 ```
 cd servidor  &&
-PGUSER=<nombre usuario> \
+TOKEN_SECRET=<password>\
+  PGUSER=<nombre usuario> \
   PGHOST=<ip servidor> \
   PGPASSWORD=<contaseña servidor> \
   PGDATABASE=<nombre base de datos> \
@@ -38,7 +39,8 @@ Desde la carpeta principal del proyecto.
 ```
 cd cliente &&
 npm install &&
-node app.js
+TOKEN_SECRET=<password>\
+  node app.js
 ```
 en la carpeta del cliente debe estar el archivo `puntajes.csv`.
 
@@ -46,11 +48,9 @@ en la carpeta del cliente debe estar el archivo `puntajes.csv`.
 ## Conexión
 Los clientes deben obtener el archivo WSDL de la dirección `http://localhost:8001/esquemaServicio?wsdl`.
 
-
-## TODO
-
-- [x] Leer datos de carreras de base de datos.
-- [ ] agregar autenticación API-KEY.
+## Autenticación
+Se utiliza autenticación WS-Security en su modalidad PasswordText.
+El nombre de usuario es `app` y password es cualquiera que se provea en el entorno de ejecución del servidor (TOKEN_SECRET), obviamente esta debe coincidir con la password enviada por el cliente para una conexión exitosa.
 
 ## Integrantes
 - Léster Vasquez
