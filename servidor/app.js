@@ -66,5 +66,12 @@ app.use(function (req, res, next) {
 app.listen(puerto, function () {
   soap.listen(app, '/esquemaServicio', servicio, xml, function () {
     console.log('servidor iniciado en puerto:', puerto);
-  });
+  })
+    .authenticate = function (security) {
+      if (!security) return false;
+      const token = security.UsernameToken;
+      const user = token.Username;
+      const password = token.Password;
+      return user === 'app' && password['$value'] === process.env.TOKEN_SECRET;
+    };
 });

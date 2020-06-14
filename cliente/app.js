@@ -2,11 +2,14 @@ const soap = require('soap');
 const fs = require('fs');
 const url = 'http://localhost:8001/esquemaServicio?wsdl';
 
+const wsSecurity = new soap.WSSecurity('app', process.env.TOKEN_SECRET);
+
 const ponderacionPSU = (callback) => {
   soap.createClient(url, (err, client) => {
     if (err) throw err;
     const archivo = fs.readFileSync('puntajes.csv');
     const req = { nombreArchivo: 'text.xlxs', mime: 'text/csv', csv_B64: archivo.toString('base64') };
+    client.setSecurity(wsSecurity);
     client.ponderacionPSU(req, (err, res) => {
       if (err) {
         console.log(err.body);
@@ -14,7 +17,7 @@ const ponderacionPSU = (callback) => {
       }
       callback(res);
     });
-  });
+  })
 };
 
 ponderacionPSU((res) => {
