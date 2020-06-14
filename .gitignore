@@ -4,6 +4,7 @@
 *.xlsx
 *.directory
 *.vscode
+*package-lock.json
 
 # Compiled Object files
 *.slo

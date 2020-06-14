@@ -28,10 +28,12 @@ let servicio = {
             const csv = Buffer.from(csv_B64, 'base64').toString('ascii');
             const lineas = csv.split(/\r?\n/)
               .filter(linea => !(linea === ''));
+
             let bufferSalida = accum.buffer((bufferCompletado) => {
               resolve({
                 nombreArchivo: nombreArchivo,
-                mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', archivo: bufferCompletado.toString('base64')
+                mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                archivo: bufferCompletado.toString('base64'),
               });
             });
             generarExcel(lineas, bufferSalida).catch(err => {
@@ -39,7 +41,7 @@ let servicio = {
                 reject(soapErr('rpc:DBError', 'Error in DB backend'));
               if (err === 'CSV')
                 reject(soapErr('rpc:BadArguments', 'CSV format error'));
-              reject(soapErr('rpc:InternalError', 'Unknown error'));
+              reject(soapErr('rpc:InternalError', 'Internal server error'));
             });
           }
           catch (err) {
@@ -59,13 +61,19 @@ var app = express();
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:8080");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, soapaction, Accept");
+  res.header("Access-Control-Allow-Headers", "soapaction");
   next();
 });
-
 
 app.listen(puerto, function () {
   soap.listen(app, '/esquemaServicio', servicio, xml, function () {
     console.log('servidor iniciado en puerto:', puerto);
-  });
+  })
+    .authenticate = function (security) {
+      if (!security) return false;
+      const token = security.UsernameToken;
+      const user = token.Username;
+      const password = token.Password;
+      return user === 'app' && password['$value'] === process.env.TOKEN_SECRET;
+    };
 });
