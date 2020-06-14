@@ -28,10 +28,12 @@ let servicio = {
             const csv = Buffer.from(csv_B64, 'base64').toString('ascii');
             const lineas = csv.split(/\r?\n/)
               .filter(linea => !(linea === ''));
+
             let bufferSalida = accum.buffer((bufferCompletado) => {
               resolve({
                 nombreArchivo: nombreArchivo,
-                mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', archivo: bufferCompletado.toString('base64')
+                mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                archivo: bufferCompletado.toString('base64'),
               });
             });
             generarExcel(lineas, bufferSalida).catch(err => {
@@ -59,7 +61,7 @@ var app = express();
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:8080");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, soapaction, Accept");
+  res.header("Access-Control-Allow-Headers", "soapaction");
   next();
 });
 

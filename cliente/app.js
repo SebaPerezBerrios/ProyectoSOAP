@@ -12,11 +12,13 @@ const ponderacionPSU = (callback) => {
     client.setSecurity(wsSecurity);
     client.ponderacionPSU(req, (err, res) => {
       if (err) {
+        console.log('ERROR');
         console.log(err.body);
+        console.log('----');
         throw 'ERROR';
       }
       callback(res);
-    });
+    }, { timeout: 3000000 });
   })
 };
 

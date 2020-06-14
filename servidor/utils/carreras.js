@@ -1,8 +1,9 @@
 const { Pool } = require('pg');
+const { MinPriorityQueue } = require('datastructures-js');
 
 const pool = new Pool();
 
-let getDatosCarreras = async (book) => {
+let getDatosCarreras = async () => {
   const { rows } = await pool.query("SELECT * FROM carreras_2020", []).catch(err => { throw 'DB' });
   return rows.map(row => ({
     ponderaciones: {
@@ -12,11 +13,12 @@ let getDatosCarreras = async (book) => {
       lenguaje: Number(row.lenguaje),
       ciencias_historia: Number(row.ciencias_historia)
     },
-    estado: {
-      postulantes: [],
-    },
-    vacantes: row.vacantes,
     nombreHoja: `${row.nombre}(${row.pk})`,
+    estado: {
+      postulantes: new MinPriorityQueue(),
+      seleccionados: [],
+      vacantes: row.vacantes,
+    },
   }
   ));
 }
