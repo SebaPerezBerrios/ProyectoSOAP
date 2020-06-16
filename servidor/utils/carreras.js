@@ -1,5 +1,4 @@
 const { Pool } = require('pg');
-const { MinPriorityQueue } = require('datastructures-js');
 
 const pool = new Pool();
 
@@ -15,7 +14,7 @@ let getDatosCarreras = async () => {
     },
     nombreHoja: `${row.nombre}(${row.pk})`,
     estado: {
-      postulantes: new MinPriorityQueue(),
+      postulantes: [],
       seleccionados: [],
       vacantes: row.vacantes,
     },
