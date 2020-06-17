@@ -18,7 +18,7 @@ const ponderacionPSU = (callback) => {
         throw 'ERROR';
       }
       callback(res);
-    }, { timeout: 3000000 });
+    });
   })
 };
 
