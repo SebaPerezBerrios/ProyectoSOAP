@@ -5,6 +5,7 @@
 *.directory
 *.vscode
 *package-lock.json
+*.log
 
 # Compiled Object files
 *.slo
