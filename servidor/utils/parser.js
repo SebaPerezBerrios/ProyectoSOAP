@@ -1,3 +1,20 @@
+/**
+ * parsear CSV.
+ * @param csv                     String que contiene los ruts y puntajes obtenidos separados por ";".              
+ * @return                        Array de ruts y puntajes obtenidos.
+ */
+const parseCSV = (csv) => {
+  const lineas = csv.split(/\r?\n/)
+    .filter(linea => !(linea === ''));
+
+  return lineas.map(parsePuntaje);
+}
+
+/**
+ * parsear linea del csv.
+ * @param linea                   String que contiene un rut y puntajes obtenidos separados por ";".              
+ * @return                        rut y puntajes obtenidos.
+ */
 const parsePuntaje = (linea) => {
   const arr = linea.split(';');
   if (arr.length !== 7) {
@@ -17,5 +34,5 @@ const parsePuntaje = (linea) => {
 }
 
 module.exports = {
-  parsePuntaje
+  parseCSV
 }

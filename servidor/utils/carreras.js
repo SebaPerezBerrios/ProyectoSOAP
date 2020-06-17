@@ -2,6 +2,12 @@ const { Pool } = require('pg');
 
 const pool = new Pool();
 
+/**
+ * Obtener datos de carreras desde base de datos.
+ * Se agrega campo estado para almacenar postulantes, seleccionados y vacantes restantes por carrera.
+ *              
+ * @return                        Array de los datos y estado de las carreras de la universidad.
+ */
 let getDatosCarreras = async () => {
   try {
     const { rows } = await pool.query("SELECT * FROM carreras_2020", []);
