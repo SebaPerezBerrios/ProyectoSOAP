@@ -31,9 +31,11 @@ const seleccionar = (datosCarreras) => {
 const agregarPostulantesCarrera = (rutPuntajes, ponderacionCarrera, totalVacantesUTEM) => {
   let postulantes = new MinPriorityQueue();
   rutPuntajes.forEach(({ rut, puntajes }) => {
-    postulantes.enqueue(rut, ponderacion(puntajes, ponderacionCarrera));
-    if (postulantes.size() > totalVacantesUTEM) {
-      postulantes.dequeue();
+    if ((puntajes.lenguaje + puntajes.matematica) / 2 >= ponderacionCarrera.mininoLenguajeMatematica) {
+      postulantes.enqueue(rut, ponderacion(puntajes, ponderacionCarrera));
+      if (postulantes.size() > totalVacantesUTEM) {
+        postulantes.dequeue();
+      }
     }
   });
   return postulantes.toArray();

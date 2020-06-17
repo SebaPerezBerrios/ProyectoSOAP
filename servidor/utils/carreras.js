@@ -10,7 +10,8 @@ let getDatosCarreras = async () => {
       ranking: Number(row.ranking),
       matematica: Number(row.matematica),
       lenguaje: Number(row.lenguaje),
-      ciencias_historia: Number(row.ciencias_historia)
+      ciencias_historia: Number(row.ciencias_historia),
+      mininoLenguajeMatematica: parseInt(row.puntaje_minimo),
     },
     nombreHoja: `${row.nombre}(${row.pk})`,
     estado: {
