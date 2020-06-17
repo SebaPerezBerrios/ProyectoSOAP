@@ -35,13 +35,13 @@ const servicioPuntajes = (nombreArchivo, mime, csv_B64, log) => {
     }
     catch (err) {
       if (err === 'DB')
-        reject(soapErr('rpc:DBError', 'Error in DB backend'), log);
+        reject(soapErr('rpc:DBError', 'Error in DB backend', log));
       else if (err === 'CSV')
-        reject(soapErr('rpc:BadArguments', 'CSV format error'), log);
+        reject(soapErr('rpc:BadArguments', 'CSV format error', log));
       else if (err === 'MIME')
-        reject(soapErr('rpc:BadArguments', 'Bad MIME type'), log);
+        reject(soapErr('rpc:BadArguments', 'Bad MIME type', log));
       else
-        reject(soapErr('rpc:InternalError', 'Internal server error'), log);
+        reject(soapErr('rpc:InternalError', 'Internal server error', log));
     }
   });
 }
