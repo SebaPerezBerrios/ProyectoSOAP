@@ -1,9 +1,19 @@
 const accum = require('accum');
 
 const { generarExcel } = require('./crearExcel');
-const { agregarPonderaciones } = require('./ponderaciones')
+const { seleccionarPostulantes } = require('./ponderaciones')
 const { getDatosCarreras } = require('../utils/carreras')
 
+/**
+ * Servicio de calculo de ponderaciones en base a puntajes.
+ *
+ * @param nombreArchivo           Nombre archivo destino.
+ * @param mime                    Tipo mime del archivo a ser leido (defecto text/csv).
+ * @param csv_B64                 Archivo csv encodeado en base64.
+ * @param log                     Logger
+ *
+ * @return archivo .xlsx encodeado en base64 el cual se envia como response a la interfaz SOAP.
+ */
 const servicioPuntajes = (nombreArchivo, mime, csv_B64, log) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -11,10 +21,12 @@ const servicioPuntajes = (nombreArchivo, mime, csv_B64, log) => {
         throw 'MIME';
 
       const csv = Buffer.from(csv_B64, 'base64').toString('ascii');
-      const lineas = csv.split(/\r?\n/)
-        .filter(linea => !(linea === ''));
 
-      log.info('Inicio procesamiento: ', lineas.length, ' lineas');
+      const datosCarreras = await getDatosCarreras();
+      log.info('obtenidas: ', datosCarreras.length, ' carreras desde base de datos');
+
+      seleccionarPostulantes(csv, datosCarreras, log);
+      log.info('Termino procesamiento OK');
 
       let bufferSalida = accum.buffer((bufferCompletado) => {
         log.info('termino request exitoso: ', new Date().toJSON());
@@ -24,12 +36,6 @@ const servicioPuntajes = (nombreArchivo, mime, csv_B64, log) => {
           archivo: bufferCompletado.toString('base64'),
         });
       });
-
-      const datosCarreras = await getDatosCarreras();
-      log.info('obtenidas: ', datosCarreras.length, ' carreras desde base de datos');
-
-      agregarPonderaciones(lineas, datosCarreras);
-      log.info('Termino procesamiento OK');
 
       generarExcel(datosCarreras, bufferSalida);
     }
@@ -46,6 +52,15 @@ const servicioPuntajes = (nombreArchivo, mime, csv_B64, log) => {
   });
 }
 
+/**
+ * Genrar formato de error SOAP.
+ *
+ * @param value                   Valor soap error.
+ * @param text                    Texto descriptivo del error.
+ * @param log                     Logger
+ *
+ * @return archivo .xlsx encodeado en base64 el cual se envia como response a la interfaz SOAP.
+ */
 const soapErr = (value, text, log) => {
   log.warn('se emite Error SOAP: ', text, '. emitido: ', new Date().toJSON());
   return {
