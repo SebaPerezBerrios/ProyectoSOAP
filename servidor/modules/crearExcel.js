@@ -1,17 +1,10 @@
 const Excel = require('exceljs');
 
-const { agregarPonderaciones } = require('./ponderaciones');
-const { getDatosCarreras } = require('../utils/carreras');
-
-const generarExcel = async (lineas, streamSalida) => {
+const generarExcel = (datosCarreras, streamSalida) => {
   const opciones = {
     stream: streamSalida,
   };
   let book = new Excel.stream.xlsx.WorkbookWriter(opciones);
-  const datosCarreras = await getDatosCarreras();
-
-  agregarPonderaciones(lineas, datosCarreras);
-
   datosCarreras.forEach((carrera) => generarHojaCarrera(book, carrera));
   book.commit();
 }

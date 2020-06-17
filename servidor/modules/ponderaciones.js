@@ -1,21 +1,18 @@
 const { parsePuntaje } = require('../utils/parser');
+const { MinPriorityQueue } = require('datastructures-js');
 
 const agregarPonderaciones = (lineas, datosCarreras) => {
   agregarPostulantes(lineas, datosCarreras);
-
   seleccionar(datosCarreras);
-
 }
 
 const agregarPostulantes = (lineas, datosCarreras) => {
+  const rutPuntajes = lineas.map(parsePuntaje);
   const totalVacantesUTEM = totalVacantes(datosCarreras);
-  lineas.forEach(linea => {
-    const rutPuntajes = parsePuntaje(linea);
-    agregarPostulanteCarrera(rutPuntajes, datosCarreras, totalVacantesUTEM);
-  });
+
   datosCarreras.forEach(carrera => {
-    carrera.estado.postulantes = carrera.estado.postulantes.toArray();
-  });
+    carrera.estado.postulantes = agregarPostulantesCarrera(rutPuntajes, carrera.ponderaciones, totalVacantesUTEM);
+  })
 }
 
 const seleccionar = (datosCarreras) => {
@@ -31,14 +28,17 @@ const seleccionar = (datosCarreras) => {
   }
 }
 
-const agregarPostulanteCarrera = (rutPuntajes, datosCarreras, totalVacantesUTEM) => {
-  const ponderacionPuntaje = ponderacion(rutPuntajes.puntajes);
-  datosCarreras.forEach(carrera => {
-    carrera.estado.postulantes.enqueue(rutPuntajes.rut, ponderacionPuntaje(carrera.ponderaciones));
-    if (carrera.estado.postulantes.size() > totalVacantesUTEM) {
-      carrera.estado.postulantes.dequeue();
+const agregarPostulantesCarrera = (rutPuntajes, ponderacionCarrera, totalVacantesUTEM) => {
+  let postulantes = new MinPriorityQueue();
+  rutPuntajes.forEach(({ rut, puntajes }) => {
+    if ((puntajes.lenguaje + puntajes.matematica) / 2 >= ponderacionCarrera.mininoLenguajeMatematica) {
+      postulantes.enqueue(rut, ponderacion(puntajes, ponderacionCarrera));
+      if (postulantes.size() > totalVacantesUTEM) {
+        postulantes.dequeue();
+      }
     }
   });
+  return postulantes.toArray();
 }
 
 const tomarPrimerosLugares = (datosCarreras, rutVistos) => {
@@ -76,7 +76,7 @@ const agregarSeleccionado = (carrera, index, rutVistos, primerosPuntajes) => {
   }
 }
 
-const ponderacion = ({ nem, ranking, matematica, lenguaje, ciencias, historia }) => carrera => {
+const ponderacion = ({ nem, ranking, matematica, lenguaje, ciencias, historia }, carrera) => {
   return carrera.nem * nem + carrera.ranking * ranking + carrera.matematica * matematica + carrera.lenguaje * lenguaje + carrera.ciencias_historia * Math.max(ciencias, historia);
 };
 
