@@ -1,7 +1,8 @@
 const accum = require("accum");
+const addon = require("../build/Release/addon");
 
 const { generarExcel } = require("./crearExcel");
-const { seleccionarPostulantes } = require("./ponderaciones");
+//const { seleccionarPostulantes } = require("./ponderaciones");
 const { getDatosCarreras } = require("../utils/carreras");
 
 /**
@@ -24,7 +25,9 @@ const servicioPuntajes = (nombreArchivo, mime, csv_B64, log) => {
       const datosCarreras = await getDatosCarreras();
       log.info("obtenidas: ", datosCarreras.length, " carreras desde base de datos");
 
-      seleccionarPostulantes(csv, datosCarreras, log);
+      addon.ponderacion(csv, datosCarreras);
+
+      //seleccionarPostulantes(csv, datosCarreras, log);
       log.info("Termino procesamiento OK");
 
       let bufferSalida = accum.buffer((bufferCompletado) => {

@@ -16,7 +16,8 @@ Desde la carpeta principal del proyecto.
 
 ```
 cd servidor &&
-npm install  
+npm install  &&
+node-gyp configure build
 ```
 ## Ejecución servidor
 

@@ -21,11 +21,11 @@ const generarExcel = (datosCarreras, streamSalida) => {
  * @param datosCarreras           Array de datos de carreras, postulantes y seleccionados.
  * @param book                    Libro excel a ser llenado.
  */
-const generarHojaCarrera = ({ estado, nombreHoja }, book) => {
+const generarHojaCarrera = ({ seleccionados, nombreHoja }, book) => {
   let hoja = book.addWorksheet(nombreHoja);
   hoja.addRow(["RUT", "Ponderación"]).commit();
 
-  estado.seleccionados.forEach(({ rut, ponderacion }) => {
+  seleccionados.forEach(({ rut, ponderacion }) => {
     hoja.addRow([rut, ponderacion]).commit();
   });
 };

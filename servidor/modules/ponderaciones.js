@@ -118,6 +118,7 @@ const agregarSeleccionado = (carrera, index, rutVistos, primerosPuntajes) => {
   let mejorPonderacionActual = {
     rut: element,
     ponderacion: priority,
+    posicion: carrera.estado.seleccionados.length,
     index: index,
   };
 
@@ -173,8 +174,11 @@ const rutVisto = (rutVistos) => (elem) => rutVistos.has(elem.element);
 /**
  * obtener la mejor de dos ponderaciones(rut, ponderacion, indeice carrera asociado) basado en el puntaje ponderado
  */
-const ponderacionMayor = (ponderacionA, ponderacionB) =>
-  ponderacionA.ponderacion > ponderacionB.ponderacion ? ponderacionA : ponderacionB;
+const ponderacionMayor = (ponderacionA, ponderacionB) => {
+  if (ponderacionA.posicion < ponderacionB.posicion) return ponderacionA;
+  if (ponderacionA.posicion > ponderacionB.posicion) return ponderacionB;
+  return ponderacionA.ponderacion > ponderacionB.ponderacion ? ponderacionA : ponderacionB;
+};
 
 /**
  * Obtener el total de vacantes restantes de la universidad.

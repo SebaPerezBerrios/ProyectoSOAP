@@ -21,6 +21,8 @@ let getDatosCarreras = async () => {
         mininoLenguajeMatematica: parseInt(row.puntaje_minimo),
       },
       nombreHoja: `${row.nombre}(${row.pk})`,
+      vacantes: row.vacantes,
+      seleccionados: [],
       estado: {
         postulantes: [],
         seleccionados: [],
