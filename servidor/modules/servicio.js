@@ -2,8 +2,7 @@ const accum = require("accum");
 const addon = require("../build/Release/addon");
 
 const { generarExcel } = require("./crearExcel");
-//const { seleccionarPostulantes } = require("./ponderaciones");
-const { getDatosCarreras } = require("../utils/carreras");
+const { getDatosCarreras } = require("./carreras");
 
 /**
  * Servicio de calculo de ponderaciones en base a puntajes.
@@ -23,15 +22,14 @@ const servicioPuntajes = (nombreArchivo, mime, csv_B64, log) => {
       const csv = Buffer.from(csv_B64, "base64").toString("ascii");
 
       const datosCarreras = await getDatosCarreras();
-      log.info("obtenidas: ", datosCarreras.length, " carreras desde base de datos");
+      log.info("Obtenidas: ", datosCarreras.length, " carreras desde base de datos");
 
       addon.ponderacion(csv, datosCarreras);
 
-      //seleccionarPostulantes(csv, datosCarreras, log);
       log.info("Termino procesamiento OK");
 
       let bufferSalida = accum.buffer((bufferCompletado) => {
-        log.info("termino request exitoso: ", new Date().toJSON());
+        log.info("Termino request exitoso: ", new Date().toJSON());
         resolve({
           nombreArchivo: nombreArchivo,
           mime: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -44,7 +42,10 @@ const servicioPuntajes = (nombreArchivo, mime, csv_B64, log) => {
       if (err === "DB") reject(soapErr("rpc:DBError", "Error in DB backend", log));
       else if (err === "CSV") reject(soapErr("rpc:BadArguments", "CSV format error", log));
       else if (err === "MIME") reject(soapErr("rpc:BadArguments", "Bad MIME type", log));
-      else reject(soapErr("rpc:InternalError", "Internal server error", log));
+      else {
+        log.error("Error Interno: ", err, ". emitido: ", new Date().toJSON());
+        reject(soapErr("rpc:InternalError", "Internal server error", log));
+      }
     }
   });
 };
@@ -59,7 +60,7 @@ const servicioPuntajes = (nombreArchivo, mime, csv_B64, log) => {
  * @return archivo .xlsx encodeado en base64 el cual se envia como response a la interfaz SOAP.
  */
 const soapErr = (value, text, log) => {
-  log.warn("se emite Error SOAP: ", text, ". emitido: ", new Date().toJSON());
+  log.warn("Se emite Error SOAP: ", text, ". emitido: ", new Date().toJSON());
   return {
     Fault: {
       Code: {

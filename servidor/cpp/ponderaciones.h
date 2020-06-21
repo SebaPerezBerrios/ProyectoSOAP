@@ -1,7 +1,6 @@
-#include <fstream>
-#include <iostream>
-#include <iterator>
-#include <sstream>
+#ifndef Ponderaciones
+#define Ponderaciones
+
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -81,7 +80,8 @@ void agregarSeleccionado(Carrera &carrera, const std::unordered_set<long> &rutsI
   auto mejorPostulante = carrera.estado.postulantes.back();
   carrera.estado.postulantes.pop_back();
 
-  PonderacionCarrera mejorPonderacionActual{carrera.estado.seleccionados.size(), mejorPostulante.ponderacion, &carrera};
+  PonderacionCarrera mejorPonderacionActual{carrera.estado.seleccionados.size(), carrera.ultimoMatriculado,
+                                            carrera.cupos, mejorPostulante.ponderacion, &carrera};
 
   auto resultado = primerosPuntajes.insert({mejorPostulante.rut, mejorPonderacionActual});
   // existe elemento previamente
@@ -102,9 +102,15 @@ void quitarRutsVistos(Postulantes &postulantes, const std::unordered_set<long> &
 }
 
 PonderacionCarrera mejorPonderacion(const PonderacionCarrera &lhs, const PonderacionCarrera &rhs) {
+  // preferencias de carrera
+
   if (lhs.posicion < rhs.posicion) return lhs;
   if (lhs.posicion > rhs.posicion) return rhs;
-  return (lhs.ponderacion > rhs.ponderacion) ? lhs : rhs;
+
+  if (lhs.ultimoMatriculado > rhs.ultimoMatriculado) return lhs;
+  if (lhs.ultimoMatriculado < rhs.ultimoMatriculado) return rhs;
+
+  return (lhs.cupos < rhs.cupos) ? lhs : rhs;
 }
 
 size_t totalVacantes(const Carreras &carreras) {
@@ -130,3 +136,5 @@ double ponderacion(const Puntajes &puntajes, const Ponderacion &ponderacion) {
          puntajes.matematica * ponderacion.matematica + puntajes.lenguaje * ponderacion.lenguaje +
          std::max(puntajes.ciencias, puntajes.historia) * ponderacion.ciencias_historia;
 }
+
+#endif

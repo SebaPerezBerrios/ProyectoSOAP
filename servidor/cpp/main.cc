@@ -1,5 +1,6 @@
 #include <napi.h>
 
+#include "lib/Structs.h"
 #include "ponderaciones.h"
 
 Ponderacion obtenerPonderacion(Napi::Env& env, const Napi::Object& ponderacionJS) {
@@ -19,7 +20,8 @@ Carreras obtenerCarreras(Napi::Env& env, const Napi::Array& carrerasJS) {
     Napi::Object carreraJSO = carreraJS.ToObject();
     auto ponderacion = obtenerPonderacion(env, carreraJSO.Get("ponderaciones").ToObject());
     auto vacantes = carreraJSO.Get("vacantes").As<Napi::Number>().Int32Value();
-    carreras.emplace_back(ponderacion, vacantes);
+    auto ultimoMatriculado = carreraJSO.Get("ultimoMatriculado").As<Napi::Number>().DoubleValue();
+    carreras.emplace_back(ponderacion, vacantes, ultimoMatriculado);
   }
 
   return carreras;
@@ -48,21 +50,25 @@ void setSeleccionados(Napi::Env& env, Napi::Array& carrerasJS, const Carreras& c
 Napi::Value Ponderacion(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   if (info.Length() < 2) {
-    Napi::TypeError::New(env, "Wrong number of arguments").ThrowAsJavaScriptException();
+    Napi::TypeError::New(env, "Se esperan argumento de csv y datos de carreras").ThrowAsJavaScriptException();
     return env.Null();
   }
-  std::string csv = info[0].As<Napi::String>();
+  try {
+    std::string csv = info[0].As<Napi::String>();
 
-  auto carrerasJS = info[1].As<Napi::Array>();
+    auto carrerasJS = info[1].As<Napi::Array>();
 
-  auto carreras = obtenerCarreras(env, carrerasJS);
+    auto carreras = obtenerCarreras(env, carrerasJS);
 
-  ponderaciones(csv, carreras);
+    ponderaciones(csv, carreras);
 
-  setSeleccionados(env, carrerasJS, carreras);
+    setSeleccionados(env, carrerasJS, carreras);
+
+  } catch (...) {
+    Napi::Error::New(env, "Error de formato de csv y/o datos de carreras").ThrowAsJavaScriptException();
+  }
 
   return env.Null();
-  return Napi::Number::New(env, carreras[1].estado.seleccionados.size());
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {

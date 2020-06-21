@@ -1,5 +1,6 @@
+#ifndef Structs
+#define Structs
 
-#include <iostream>
 #include <queue>
 #include <vector>
 
@@ -38,9 +39,13 @@ struct Estado {
 
 struct Carrera {
   Ponderacion ponderacion;
+  long cupos;
+  double ultimoMatriculado;
   Estado estado;
-  Carrera(const Ponderacion &_ponderacion, long _vacantes) {
+  Carrera(const Ponderacion &_ponderacion, long _vacantes, double _ultimoMatriculado) {
     ponderacion = _ponderacion;
+    cupos = _vacantes;
+    ultimoMatriculado = _ultimoMatriculado;
     estado = {std::vector<Postulante>(), std::vector<Postulante>(), _vacantes};
   }
 };
@@ -50,7 +55,10 @@ struct ComparadorPostulante {
 };
 
 struct PonderacionCarrera {
+  // criterios de seleccion de carrera
   size_t posicion;
+  double ultimoMatriculado;
+  long cupos;
   double ponderacion;
   Carrera *carreraAsociada;
 };
@@ -58,3 +66,5 @@ struct PonderacionCarrera {
 using Postulantes = std::vector<Postulante>;
 using Carreras = std::vector<Carrera>;
 using priority_queue_postulante = std::priority_queue<Postulante, std::vector<Postulante>, ComparadorPostulante>;
+
+#endif

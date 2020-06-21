@@ -9,7 +9,7 @@ let servicio = {
   servicio: {
     puerto: {
       ponderacionPSU: ({ nombreArchivo, mime, csv_B64 }) => {
-        log.info("inicio request: ", new Date().toJSON());
+        log.info("Inicio request: ", new Date().toJSON());
         return servicioPuntajes(nombreArchivo, mime, csv_B64, log);
       },
     },
@@ -28,7 +28,7 @@ app.use(function (req, res, next) {
 
 app.listen(puerto, function () {
   soap.listen(app, "/esquemaServicio", servicio, xml, function () {
-    console.log("servidor iniciado en puerto:", puerto);
+    console.log("Servidor iniciado en puerto:", puerto);
   }).authenticate = function (security) {
     if (!security) return false;
     const token = security.UsernameToken;

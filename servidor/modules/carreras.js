@@ -1,7 +1,5 @@
 const { Pool } = require("pg");
 
-const pool = new Pool();
-
 /**
  * Obtener datos de carreras desde base de datos.
  * Se agrega campo estado para almacenar postulantes, seleccionados y vacantes restantes por carrera.
@@ -9,6 +7,7 @@ const pool = new Pool();
  * @return                        Array de los datos y estado de las carreras de la universidad.
  */
 let getDatosCarreras = async () => {
+  const pool = new Pool();
   try {
     const { rows } = await pool.query("SELECT * FROM carreras_2020", []);
     return rows.map((row) => ({
@@ -18,16 +17,12 @@ let getDatosCarreras = async () => {
         matematica: Number(row.matematica),
         lenguaje: Number(row.lenguaje),
         ciencias_historia: Number(row.ciencias_historia),
-        mininoLenguajeMatematica: parseInt(row.puntaje_minimo),
       },
-      nombreHoja: `${row.nombre}(${row.pk})`,
+      mininoLenguajeMatematica: parseInt(row.puntaje_minimo),
       vacantes: row.vacantes,
+      ultimoMatriculado: Number(row.ultimo),
       seleccionados: [],
-      estado: {
-        postulantes: [],
-        seleccionados: [],
-        vacantes: row.vacantes,
-      },
+      nombreHoja: `${row.nombre}(${row.pk})`,
     }));
   } catch (err) {
     throw "DB";

@@ -1,3 +1,6 @@
+#ifndef Parser
+#define Parser
+
 #include <iostream>
 #include <vector>
 
@@ -42,11 +45,11 @@ RutPuntajes parsePuntaje(std::string::const_iterator& iterador) {
 long parseRut(std::string::const_iterator& iterador) { return (long)parseNumero(iterador); }
 
 unsigned int parseNumero(std::string::const_iterator& iterador) {
-  if (*iterador == ';' || *iterador == '\0' || *iterador == '\n' || *iterador == '\r') {
+  if (*iterador < '0' || *iterador > '9') {
     throw "Se esperaba numero";
   }
   unsigned int resultado = 0;
-  while (*iterador != ';' && *iterador != '\0' && *iterador != '\n' && *iterador != '\r') {
+  while (*iterador >= '0' && *iterador <= '9') {
     resultado = resultado * 10 + (*iterador++ - '0');
   }
   return resultado;
@@ -65,3 +68,5 @@ void parseFinLinea(std::string::const_iterator& iterador) {
   }
   ++iterador;
 }
+
+#endif

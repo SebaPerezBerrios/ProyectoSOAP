@@ -5,11 +5,19 @@ Este repositorio contiene el backend SOAP,  además se incluye un cliente que pe
 
 # Requisitos de funcionamiento
 
-- Se requiere`Node JS` LTS (v12.17.0).
+- Se requiere`Node JS` LTS (v10.19.0 o superior).
 - PostgreSQL actualizado en su version 12.
+
+# Instalación de requerimientos en Ubuntu 20.04
+
+```
+sudo apt install nodejs npm postgresql postgresql-contrib
+
+```
 
 ## Base de datos
 En el repositorio se incluyen tanto el script de creación como el script de llenado de base de datos con la información de ponderaciones, puntajes y vacantes de las carreras impartidas por la UTEM periodo 2020.
+La tabla generada debe ser accesible por el servidor de lo contrario se emite un error SOAP a los clientes.
 
 ## Instalación servidor
 Desde la carpeta principal del proyecto.
