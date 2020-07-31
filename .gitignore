@@ -1,5 +1,6 @@
 # Prerequisites
 *node_modules
+*build
 *.csv
 *.xlsx
 *.directory

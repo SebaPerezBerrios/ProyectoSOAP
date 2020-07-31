@@ -1,4 +1,4 @@
-const Excel = require('exceljs');
+const Excel = require("exceljs");
 
 /**
  * Genera un archivo excel en el stream de salida con los datos de los postulantes (rut y ponderacion) por carrera.
@@ -13,7 +13,7 @@ const generarExcel = (datosCarreras, streamSalida) => {
   let book = new Excel.stream.xlsx.WorkbookWriter(opciones);
   datosCarreras.forEach((carrera) => generarHojaCarrera(carrera, book));
   book.commit();
-}
+};
 
 /**
  * Genera las hojas del libro excel asociadas a cada carrera y las llena con los ruts y puntajes seleccionados.
@@ -21,16 +21,15 @@ const generarExcel = (datosCarreras, streamSalida) => {
  * @param datosCarreras           Array de datos de carreras, postulantes y seleccionados.
  * @param book                    Libro excel a ser llenado.
  */
-const generarHojaCarrera = ({ estado, nombreHoja }, book) => {
+const generarHojaCarrera = ({ seleccionados, nombreHoja }, book) => {
   let hoja = book.addWorksheet(nombreHoja);
-  hoja.addRow(['RUT', 'Ponderación']).commit();
+  hoja.addRow(["RUT", "Ponderación"]).commit();
 
-  estado.seleccionados
-    .forEach(({ rut, ponderacion }) => {
-      hoja.addRow([rut, ponderacion]).commit();
-    });
-}
+  seleccionados.forEach(({ rut, ponderacion }) => {
+    hoja.addRow([rut, ponderacion]).commit();
+  });
+};
 
 module.exports = {
-  generarExcel
-}
+  generarExcel,
+};
