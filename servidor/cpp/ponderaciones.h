@@ -10,7 +10,7 @@
 void ponderaciones(const std::string &, Carreras &);
 void agregarPostulantes(const std::vector<RutPuntajes> &, Carreras &);
 size_t totalVacantes(const Carreras &);
-Postulantes filtrarPostulantesCarrera(const std::vector<RutPuntajes> &, const Ponderacion &, size_t);
+Postulantes filtrarPostulantesCarrera(const std::vector<RutPuntajes> &, const Carrera &, size_t);
 Postulantes toArray(priority_queue_postulante &);
 void seleccionar(Carreras &);
 void tomarPrimerosLugares(Carreras &, std::unordered_set<long> &);
@@ -20,23 +20,26 @@ PonderacionCarrera mejorPonderacion(const PonderacionCarrera &, const Ponderacio
 double ponderacion(const Puntajes &, const Ponderacion &);
 
 void ponderaciones(const std::string &csv, Carreras &carreras) {
-  auto resultado = parseCSV(csv);
-  agregarPostulantes(resultado, carreras);
+  auto rutsPuntajes = parseCSV(csv);
+  agregarPostulantes(rutsPuntajes, carreras);
   seleccionar(carreras);
 }
 
 void agregarPostulantes(const std::vector<RutPuntajes> &rutsPuntajes, Carreras &carreras) {
   auto totalVacantesUTEM = totalVacantes(carreras);
   for (auto &carrera : carreras) {
-    carrera.estado.postulantes = filtrarPostulantesCarrera(rutsPuntajes, carrera.ponderacion, totalVacantesUTEM);
+    carrera.estado.postulantes = filtrarPostulantesCarrera(rutsPuntajes, carrera, totalVacantesUTEM);
   }
 }
 
-Postulantes filtrarPostulantesCarrera(const std::vector<RutPuntajes> &rutsPuntajes,
-                                      const Ponderacion &ponderacionCarrera, size_t totalVacantesUTEM) {
+Postulantes filtrarPostulantesCarrera(const std::vector<RutPuntajes> &rutsPuntajes, const Carrera &carrera,
+                                      size_t totalVacantesUTEM) {
   priority_queue_postulante mejoresPostulantes;
   for (const auto &rutPuntaje : rutsPuntajes) {
-    mejoresPostulantes.push({rutPuntaje.rut, ponderacion(rutPuntaje.puntajes, ponderacionCarrera)});
+    auto ponderacionPuntaje = ponderacion(rutPuntaje.puntajes, carrera.ponderacion);
+    // filtrar por puntaje del ultimo matriculado, margen del 5%
+    if (ponderacionPuntaje < carrera.ultimoMatriculado * 0.95) continue;
+    mejoresPostulantes.push({rutPuntaje.rut, ponderacionPuntaje});
     if (mejoresPostulantes.size() > totalVacantesUTEM) {
       mejoresPostulantes.pop();
     }
@@ -102,7 +105,7 @@ void quitarRutsVistos(Postulantes &postulantes, const std::unordered_set<long> &
 }
 
 PonderacionCarrera mejorPonderacion(const PonderacionCarrera &lhs, const PonderacionCarrera &rhs) {
-  // preferencias de carrera
+  // preferencias de carrera, posicion -> ultimo matriculado -> cupos
 
   if (lhs.posicion < rhs.posicion) return lhs;
   if (lhs.posicion > rhs.posicion) return rhs;
